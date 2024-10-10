@@ -22,18 +22,23 @@ exports.registerUser = async (req, res) => {
 
 // Login User
 exports.loginUser = async (req, res) => {
-    const { email, password } = req.body;
-    try {
-      const user = await User.findOne({ email });
-      if (!user) return res.status(400).json({ message: 'Invalid credentials' });
-  
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
-  
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-      res.status(200).json({ token, user: { id: user._id, name: user.name, email: user.email } });
-    } catch (err) {
-      res.status(500).json({ message: 'Server error' });
-    }
-  };
-  
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message: 'Invalid credentials' });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.status(200).json({ token, user: { id: user._id, name: user.name, email: user.email } });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Logout User
+exports.logoutUser = (req, res) => {
+  // Simply respond with a success message
+  res.status(200).json({ message: 'User logged out successfully' });
+};
